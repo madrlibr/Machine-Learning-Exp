@@ -1,69 +1,58 @@
 import math
 import numpy as np
 
-#The logistic regression still not fixed yet
-"""class LogisticRegression:
-    def __init__(self, x, y, lr):
-        self.b = 0
-        self.w = 0
-        self.x = x
-        self.y = x
-        self.lr = lr
-
-    def gradientDescent(self):
-        P = lambda z: 1 / (1 + (math.e ** -z))
-        epoch = 10
-        for i in range(epoch):
-            for X, Y in zip(self.x, self.y):
-                print(f"w: {self.w}")
-                print(f"b: {self.b}")
-                self.z = self.b + (self.w * X)
-                self.yp = P(self.z)
-
-                error = (self.yp - Y)
-                self.lossb = error
-                self.lossW = error * X
-
-                self.w = self.w - (self.lr * self.lossW)
-                self.b = self.b - (self.lr * self.lossb)
-                
-                self.z = self.b + (self.w * X)
-                self.yp = P(self.z)
-                
-        self.z = self.b + (self.w * self.x)
-        self.yp = P(self.z)
+class LogisticRegression:
+    def __init__(self, x, y):
+        self.bias = 0.0
+        self.weight = 0.0
+        self.x = self.x = np.array(x).reshape(-1, 1)
+        self.y = self.y = np.array(y).reshape(-1, 1)
         
-        return self.yp, self.w, self.b
+    def fit(self, epoch, lr):
+        m = len(self.x)
+        self.P = lambda za: 1 / (1 + np.exp(-za))
+        self.x = self.x / 100
+        for i in range(epoch):
+            z = self.weight * self.x + self.bias
+            yPred = self.P(z)
+            
+            error = yPred - self.y
+            notDoneYet = (1 / m) * np.mean(error) * self.x
+            tsTuff = (1 / m) * np.mean(error)
+
+            self.weight -= lr * notDoneYet
+            self.bias -= lr * tsTuff
+            
+        return self.weight, self.bias
     
     def predict(self, x):
-        self.z = self.b + (self.w * x)
-        P = 1 / (1 + math.e ** -self.z)
-
-        return round(P, 3)"""
-
+        P = self.P(za=self.weight * x + self.bias) 
+        return P
+        
 class LinearRegression:
-    def __init__(self, x, y, lr):
+    def __init__(self, x, y):
         self.bias = 0
         self.weight = 0
         self.x = self.x = np.array(x).reshape(-1, 1)
         self.y = self.y = np.array(y).reshape(-1, 1)
-        self.lr = lr
         
-    def fit(self):
-        epoch = 1000
+    def fit(self, epoch, lr):
+        self.P = lambda w, b, x: w * x + b
         n = len(self.x)
         for i in range(epoch):
-            yPred = self.weight * self.x + self.bias
+            yPred = self.P(self.weight, self.bias, self.x)
             error = yPred - self.y
             
             dw = (2/n) * np.sum(error * self.x)
             db = (2/n) * np.sum(error)
             
-            self.weight -= self.lr * dw
-            self.bias -= self.lr * db
-            
+            self.weight -= lr * dw
+            self.bias -= lr * db
+            mse = np.mean(error**2)
+
         return self.weight, self.bias
     
     def predict(self, x):
-        yp = self.w * x + self.b
-        return yp
+        return self.P(self.weight, self.bias, x)
+        
+
