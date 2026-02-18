@@ -1,5 +1,5 @@
-# Experiment for machine learning
-This simply just a machine learning experiment.
+# Machibe Learning from Scratch
+Here i write the machine learning from scratch for better understanding of machine learning
 
 
 ## License

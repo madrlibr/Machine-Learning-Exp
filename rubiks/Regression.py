@@ -13,27 +13,36 @@ class LogisticRegression:
         self.x = np.array(x).reshape(-1, 1)
         self.y = np.array(y).reshape(-1, 1)
         
-    def fit(self, epoch, lr):
+    def train(self, epoch, lr, tol):
         m = len(self.x)
         self.P = lambda za: 1 / (1 + np.exp(-za))
+        lossB = np.inf
         for i in range(epoch):
             z = self.weight * self.x + self.bias
             yPred = self.P(z)
-            
-            error = yPred - self.y
-            dw = (1 / m) * np.dot(self.x.T, error)
-            db = (1 / m) * np.sum(error)
 
-            self.weight -= lr * dw.item()
-            self.bias -= lr * db
+            #lossN = -(1/m) * np.sum(self.y * np.log(yPred) + (1 - self.y) * np.log(1 - yPred))
+
+            """if abs(lossB - lossN) < tol:
+                print(f"Convergen at iteration-{i}")
+                break"""
             
+            #lossB = lossN
+            error = yPred - self.y
+            
+            dw = np.sum(self.x * error) / m
+            db = np.sum(error) / m
+
+            self.weight -= lr * dw
+            self.bias -= lr * db
+
         return self.weight, self.bias
-    
+
     def predict(self, x):
         P = self.P(za=self.weight * x + self.bias) 
         return P
 
-        
+
 class LinearRegression:
     def __init__(self, x, y):
         self.bias = 0
@@ -41,8 +50,8 @@ class LinearRegression:
         self.x = np.array(x).reshape(-1, 1)
         self.y = np.array(y).reshape(-1, 1)
         
-    def fit(self, epoch, lr):
-        self.P = lambda w, b, x: w * x + b
+    def train(self, epoch, lr):
+        self.P = lambda w, b, x: (w * x) + b
         n = len(self.x)
         for i in range(epoch):
             yPred = self.P(self.weight, self.bias, self.x)
