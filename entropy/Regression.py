@@ -7,30 +7,31 @@ init_printing(use_latex='mathjax')
 
 
 class LogisticRegression:
-    def __init__(self, x, y):
+    def __init__(self):
         self.bias = 0.0
         self.weight = 0.0
-        self.x = np.array(x).reshape(-1, 1)
-        self.y = np.array(y).reshape(-1, 1)
-        
-    def train(self, epoch, lr, tol):
-        m = len(self.x)
+
+    def train(self, x, y, epoch, lr, tol):
+        X = np.array(x).reshape(-1, 1)
+        Y = np.array(y).reshape(-1, 1)
+        m = len(X)
         self.P = lambda za: 1 / (1 + np.exp(-za))
         lossB = np.inf
+        
         for i in range(epoch):
-            z = self.weight * self.x + self.bias
+            z = self.weight * X + self.bias
             yPred = self.P(z)
 
-            #lossN = -(1/m) * np.sum(self.y * np.log(yPred) + (1 - self.y) * np.log(1 - yPred))
+            #lossN = -(1/m) * np.sum(Y * np.log(yPred) + (1 - Y) * np.log(1 - yPred))
 
             """if abs(lossB - lossN) < tol:
                 print(f"Convergen at iteration-{i}")
-                break"""
+                break""" #Not working properly so i comment this
             
             #lossB = lossN
-            error = yPred - self.y
+            error = yPred - Y
             
-            dw = np.sum(self.x * error) / m
+            dw = np.sum(X * error) / m
             db = np.sum(error) / m
 
             self.weight -= lr * dw
@@ -44,20 +45,21 @@ class LogisticRegression:
 
 
 class LinearRegression:
-    def __init__(self, x, y):
+    def __init__(self):
         self.bias = 0
         self.weight = 0
-        self.x = np.array(x).reshape(-1, 1)
-        self.y = np.array(y).reshape(-1, 1)
-        
-    def train(self, epoch, lr):
+
+    def train(self, x, y, epoch, lr):
+        X = np.array(x).reshape(-1, 1)
+        Y = np.array(x).reshape(-1, 1)
         self.P = lambda w, b, x: (w * x) + b
-        n = len(self.x)
+        n = len(X)
+        
         for i in range(epoch):
-            yPred = self.P(self.weight, self.bias, self.x)
-            error = yPred - self.y
+            yPred = self.P(self.weight, self.bias, X)
+            error = yPred - Y
             
-            dw = (2/n) * np.sum(error * self.x)
+            dw = (2/n) * np.sum(error * X)
             db = (2/n) * np.sum(error)
             
             self.weight -= lr * dw
@@ -66,8 +68,8 @@ class LinearRegression:
 
         return self.weight, self.bias
     
-    def predict(self, x):
-        return self.P(self.weight, self.bias, x)
+    def predict(self, X):
+        return self.P(self.weight, self.bias, X)
 
     def showFormula(self):
         print("Model:")
@@ -78,9 +80,4 @@ class LinearRegression:
         display(Math(r'db = \frac{2}{n} \sum_{i=1}^{n} (y_{pred} - y_i)'))
         
 
-def MSE(yPred, yTrue):
-    error = yPred - yTrue
-    print(f"{yPred} - {yTrue} = {error}")
-    print(f"Error^2 = {error ** 2}")
-    return np.mean((yPred - yTrue) ** 2)
 

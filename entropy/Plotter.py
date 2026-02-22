@@ -12,10 +12,9 @@ def LinearPlot(X, Y, weight, bias):
     plt.grid(True)
     plt.show()
 
-def LogisticPlot(weight, bias):
-    x = np.linspace(-10, 10, 1000)
+def LogisticPlot(x, weight, bias):
     y = 1 / (1 + np.exp(-(weight * x + bias)))
-    plt.figure(figsize=(8, 5))
+    plt.figure(figsize=(5, 3))
     plt.plot(x, y, label=f'(weight={weight}, bias={bias})', color='blue', linewidth=2)
     plt.axhline(y=0.5, color='red', linestyle='--', alpha=0.5)
     plt.axvline(x=-bias/weight, color='green', linestyle='--', alpha=0.5, label='Decision Boundary')
